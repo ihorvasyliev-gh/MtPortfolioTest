@@ -1,0 +1,353 @@
+{
+  "rev": 0,
+  "site": {
+    "name": "Mariia Troian",
+    "role": "Freelance Model",
+    "location": "Cork, Ireland",
+    "email": "mellygrass@icloud.com",
+    "instagram": "rebel_in_cork",
+    "description": "Mariia Troian is a Ukrainian freelance model based in Cork, Ireland. Available for commercial, runway, print, catalogue, promotional, parts and petite modelling."
+  },
+  "hero": {
+    "lede": "Classic beauty with a baby-face look. Commercial, runway, print and petite modelling.",
+    "image": {
+      "full": "/assets/photos/editorial/editorial-01.jpg",
+      "alt": "Mariia Troian in a black dress against a dark studio backdrop"
+    }
+  },
+  "about": {
+    "heading": "A classic *look.*",
+    "paragraphs": [
+      "I'm a Ukrainian freelance model based in Cork, Ireland. My classic beauty and baby-face features give me a natural fit for commercial and brand work, and my petite frame suits catalogue, runway and parts modelling.",
+      "I'm comfortable in front of the camera and on the move: dancing and acting experience help me bring direction to life quickly, whether it's a studio set, a street campaign or a live promotion."
+    ],
+    "facts": [
+      {
+        "label": "Languages",
+        "value": "English · Ukrainian · Russian"
+      },
+      {
+        "label": "Also",
+        "value": "Dancing · Acting"
+      },
+      {
+        "label": "Based in",
+        "value": "Cork, Ireland"
+      }
+    ],
+    "image": {
+      "full": "/assets/photos/portrait/portrait-01.jpg",
+      "alt": "Close-up portrait of Mariia Troian"
+    }
+  },
+  "services": [
+    {
+      "title": "Commercial",
+      "text": "Brand, lifestyle and advertising campaigns"
+    },
+    {
+      "title": "Runway",
+      "text": "Fashion shows and presentations"
+    },
+    {
+      "title": "Print & Catalogue",
+      "text": "Editorials, lookbooks and product ranges"
+    },
+    {
+      "title": "Parts Model",
+      "text": "Hands, feet and detail work"
+    },
+    {
+      "title": "Promotional",
+      "text": "Events, activations and brand promotion"
+    },
+    {
+      "title": "Petite Model",
+      "text": "Petite ranges and sizing-specific campaigns"
+    }
+  ],
+  "stats": [
+    {
+      "value": "168",
+      "unit": "cm",
+      "label": "Height"
+    },
+    {
+      "value": "90 · 70 · 97",
+      "unit": "cm",
+      "label": "Bust / Waist / Hips"
+    },
+    {
+      "value": "XS–S",
+      "unit": "",
+      "label": "Clothing"
+    },
+    {
+      "value": "EU 38.5",
+      "unit": "",
+      "label": "Shoe"
+    }
+  ],
+  "traits": [
+    {
+      "label": "Eyes",
+      "value": "Green / Grey"
+    },
+    {
+      "label": "Hair",
+      "value": "Dark Brown, Mid-Length"
+    },
+    {
+      "label": "Nationality",
+      "value": "Ukrainian"
+    }
+  ],
+  "categories": [
+    {
+      "id": "portrait",
+      "label": "Portrait"
+    },
+    {
+      "id": "studio",
+      "label": "Studio"
+    },
+    {
+      "id": "editorial",
+      "label": "Editorial"
+    },
+    {
+      "id": "commercial",
+      "label": "Commercial"
+    },
+    {
+      "id": "seasonal",
+      "label": "Seasonal"
+    }
+  ],
+  "contact": {
+    "heading": "Let's create\n*something together.*",
+    "note": "Available for bookings in Cork and across Ireland. Get in touch for rates and availability."
+  },
+  "photos": [
+    {
+      "id": "portrait-01",
+      "cat": "portrait",
+      "group": "Portfolio shoot",
+      "alt": "Close-up portrait, looking to the side",
+      "full": "/assets/photos/portrait/portrait-01.jpg",
+      "thumb": "/assets/thumbs/portrait/portrait-01.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "portrait-05",
+      "cat": "portrait",
+      "group": "Portfolio shoot",
+      "alt": "Full-length studio pose in a black jumpsuit",
+      "full": "/assets/photos/portrait/portrait-05.jpg",
+      "thumb": "/assets/thumbs/portrait/portrait-05.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "portrait-02",
+      "cat": "portrait",
+      "group": "Portfolio shoot",
+      "alt": "Half-length portrait with hand on hip",
+      "full": "/assets/photos/portrait/portrait-02.jpg",
+      "thumb": "/assets/thumbs/portrait/portrait-02.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "portrait-06",
+      "cat": "portrait",
+      "group": "Portfolio shoot",
+      "alt": "Full-length studio pose with arms raised",
+      "full": "/assets/photos/portrait/portrait-06.jpg",
+      "thumb": "/assets/thumbs/portrait/portrait-06.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "portrait-03",
+      "cat": "portrait",
+      "group": "Portfolio shoot",
+      "alt": "Portrait with raised arm and a direct gaze",
+      "full": "/assets/photos/portrait/portrait-03.jpg",
+      "thumb": "/assets/thumbs/portrait/portrait-03.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "portrait-04",
+      "cat": "portrait",
+      "group": "Portfolio shoot",
+      "alt": "Seated portrait, chin resting on hand",
+      "full": "/assets/photos/portrait/portrait-04.jpg",
+      "thumb": "/assets/thumbs/portrait/portrait-04.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "editorial-02",
+      "cat": "editorial",
+      "group": "More work",
+      "alt": "Editorial shot in vivid neon light with lace gloves",
+      "full": "/assets/photos/editorial/editorial-02.jpg",
+      "thumb": "/assets/thumbs/editorial/editorial-02.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "commercial-01",
+      "cat": "commercial",
+      "group": "More work",
+      "alt": "Commercial lifestyle shot in an orange blazer in a cornfield",
+      "full": "/assets/photos/commercial/commercial-01.jpg",
+      "thumb": "/assets/thumbs/commercial/commercial-01.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "editorial-01",
+      "cat": "editorial",
+      "group": "More work",
+      "alt": "Moody studio portrait in a black leather dress",
+      "full": "/assets/photos/editorial/editorial-01.jpg",
+      "thumb": "/assets/thumbs/editorial/editorial-01.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "seasonal-01",
+      "cat": "seasonal",
+      "group": "More work",
+      "alt": "Festive shot in a reindeer sweater and antlers",
+      "full": "/assets/photos/seasonal/seasonal-01.jpg",
+      "thumb": "/assets/thumbs/seasonal/seasonal-01.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "studio-01",
+      "cat": "studio",
+      "group": "More work",
+      "alt": "Studio portrait in a white ballet-inspired bodysuit on a stool",
+      "full": "/assets/photos/studio/studio-01.jpg",
+      "thumb": "/assets/thumbs/studio/studio-01.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "commercial-02",
+      "cat": "commercial",
+      "group": "More work",
+      "alt": "Lifestyle shot in a green knit among tropical leaves",
+      "full": "/assets/photos/commercial/commercial-02.jpg",
+      "thumb": "/assets/thumbs/commercial/commercial-02.jpg",
+      "w": 636,
+      "h": 900
+    },
+    {
+      "id": "editorial-03",
+      "cat": "editorial",
+      "group": "More work",
+      "alt": "Editorial with flowing dark fabric and a corset",
+      "full": "/assets/photos/editorial/editorial-03.jpg",
+      "thumb": "/assets/thumbs/editorial/editorial-03.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "seasonal-03",
+      "cat": "seasonal",
+      "group": "More work",
+      "alt": "Festive elf-style shot in a hanging chair with warm lights",
+      "full": "/assets/photos/seasonal/seasonal-03.jpg",
+      "thumb": "/assets/thumbs/seasonal/seasonal-03.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "commercial-03",
+      "cat": "commercial",
+      "group": "More work",
+      "alt": "Street lifestyle portrait with a rainbow lollipop",
+      "full": "/assets/photos/commercial/commercial-03.jpg",
+      "thumb": "/assets/thumbs/commercial/commercial-03.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "editorial-04",
+      "cat": "editorial",
+      "group": "More work",
+      "alt": "Black and white editorial portrait with lace gloves",
+      "full": "/assets/photos/editorial/editorial-04.jpg",
+      "thumb": "/assets/thumbs/editorial/editorial-04.jpg",
+      "w": 630,
+      "h": 900
+    },
+    {
+      "id": "seasonal-02",
+      "cat": "seasonal",
+      "group": "More work",
+      "alt": "Festive portrait in a red dress and Santa hat on a white armchair",
+      "full": "/assets/photos/seasonal/seasonal-02.jpg",
+      "thumb": "/assets/thumbs/seasonal/seasonal-02.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "studio-02",
+      "cat": "studio",
+      "group": "More work",
+      "alt": "Studio pose seated on a cube in black heels",
+      "full": "/assets/photos/studio/studio-02.jpg",
+      "thumb": "/assets/thumbs/studio/studio-02.jpg",
+      "w": 552,
+      "h": 900
+    },
+    {
+      "id": "commercial-04",
+      "cat": "commercial",
+      "group": "More work",
+      "alt": "Fashion shot in a blue dress and blue heels on a garden boardwalk",
+      "full": "/assets/photos/commercial/commercial-04.jpg",
+      "thumb": "/assets/thumbs/commercial/commercial-04.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "editorial-05",
+      "cat": "editorial",
+      "group": "More work",
+      "alt": "Editorial portrait in a flowing white dress",
+      "full": "/assets/photos/editorial/editorial-05.jpg",
+      "thumb": "/assets/thumbs/editorial/editorial-05.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "seasonal-04",
+      "cat": "seasonal",
+      "group": "More work",
+      "alt": "Festive shot with a neon sign and a Christmas mug",
+      "full": "/assets/photos/seasonal/seasonal-04.jpg",
+      "thumb": "/assets/thumbs/seasonal/seasonal-04.jpg",
+      "w": 600,
+      "h": 900
+    },
+    {
+      "id": "studio-03",
+      "cat": "studio",
+      "group": "More work",
+      "alt": "Seated studio portrait in a sheer-sleeved black bodysuit",
+      "full": "/assets/photos/studio/studio-03.jpg",
+      "thumb": "/assets/thumbs/studio/studio-03.jpg",
+      "w": 601,
+      "h": 900
+    }
+  ]
+}

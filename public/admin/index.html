@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a0a0b">
+<title>Админка · Mariia Troian</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<main class="login" id="login" hidden>
+  <form class="login-card" id="loginForm">
+    <div class="login-logo">M<span>.</span>T</div>
+    <h1>Вход в админку</h1>
+    <label class="field">
+      <span>Пароль</span>
+      <input type="password" id="password" autocomplete="current-password" required autofocus>
+    </label>
+    <p class="error" id="loginError" role="alert" hidden></p>
+    <button class="btn primary" type="submit">Войти</button>
+  </form>
+</main>
+
+<!-- APP -->
+<div class="app" id="app" hidden>
+  <header class="top">
+    <div class="top-title">
+      <strong>Админка</strong>
+      <span class="status" id="status"></span>
+    </div>
+    <a class="btn ghost small" href="/" target="_blank" rel="noopener">Открыть сайт ↗</a>
+    <button class="btn primary small" id="publish" disabled>Опубликовать</button>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Разделы">
+    <button role="tab" data-tab="photos"><i>▦</i><span>Фото</span></button>
+    <button role="tab" data-tab="profile"><i>☺</i><span>Профиль</span></button>
+    <button role="tab" data-tab="services"><i>☰</i><span>Услуги</span></button>
+    <button role="tab" data-tab="stats"><i>▤</i><span>Параметры</span></button>
+    <button role="tab" data-tab="settings"><i>⚙</i><span>Контакты</span></button>
+  </nav>
+
+  <main class="content" id="content"></main>
+</div>
+
+<dialog id="dialog"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/admin/admin.js"></script>
+</body>
+</html>

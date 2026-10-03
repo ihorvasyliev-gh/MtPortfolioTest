@@ -22,20 +22,38 @@
   $$('.reveal').forEach(el => io.observe(el));
 
   // Gallery: filter + staggered columns
-  const gallery = $('#gallery');
+  const gallery = $('#gallery') || document.createElement('div'); // absent when there are no photos
   const tiles = $$('.tile', gallery);
   const dividers = $$('.g-divider', gallery);
   const chips = $$('.chip');
 
+  // Masonry that keeps reading order: each tile goes into the currently shortest column.
+  // Heights come from each image's width/height attributes, so nothing jumps while images load.
   const layout = () => {
-    const cols = getComputedStyle(gallery).gridTemplateColumns.split(' ').length;
-    let i = 0;
+    const W = gallery.clientWidth;
+    if (!W) return;
+    const cols = W >= 1000 ? 4 : W >= 640 ? 3 : 2;
+    const gap = parseFloat(getComputedStyle(gallery).columnGap) || 12;
+    const colW = (W - gap * (cols - 1)) / cols;
+    const heights = Array(cols).fill(0);
+    gallery.classList.add('masonry');
     [...gallery.children].forEach(el => {
       if (el.classList.contains('hide')) return;
-      if (el.classList.contains('g-divider')) { i = 0; return; }
-      el.classList.toggle('offset', cols > 2 && i % cols % 2 === 1);
-      i++;
+      if (el.classList.contains('g-divider')) {
+        const top = Math.max(...heights);
+        const mt = parseFloat(getComputedStyle(el).marginTop) || 0;
+        el.style.cssText = `top:${top}px;left:0;width:${W}px`;
+        heights.fill(top + mt + el.offsetHeight + gap);
+        return;
+      }
+      const img = el.firstElementChild;
+      const ar = Math.min(2, Math.max(.5, img.getAttribute('width') / img.getAttribute('height') || .667));
+      const c = heights.indexOf(Math.min(...heights));
+      const hgt = colW / ar;
+      el.style.cssText = `top:${heights[c]}px;left:${c * (colW + gap)}px;width:${colW}px;height:${hgt}px`;
+      heights[c] += hgt + gap;
     });
+    gallery.style.height = Math.max(0, Math.max(...heights) - gap) + 'px';
   };
 
   const applyFilter = f => {
@@ -53,7 +71,8 @@
     }, 280);
   };
   chips.forEach(c => c.addEventListener('click', () => applyFilter(c.dataset.filter)));
-  addEventListener('resize', layout);
+  let lastW = 0;
+  new ResizeObserver(() => { if (gallery.clientWidth !== lastW) { lastW = gallery.clientWidth; layout(); } }).observe(gallery);
   layout();
 
   // Lightbox
@@ -69,7 +88,7 @@
     img.onload = () => {
       lbImg.src = img.src;
       lbImg.alt = t.dataset.alt;
-      lbCap.textContent = `${t.dataset.cat.charAt(0).toUpperCase() + t.dataset.cat.slice(1)} — ${current + 1} / ${shown.length}`;
+      lbCap.textContent = `${t.dataset.label ? t.dataset.label + ' — ' : ''}${current + 1} / ${shown.length}`;
       lbImg.classList.remove('swap');
     };
     img.src = t.dataset.full;
