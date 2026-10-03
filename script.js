@@ -24,14 +24,16 @@
   // Gallery: filter + staggered columns
   const gallery = $('#gallery');
   const tiles = $$('.tile', gallery);
+  const dividers = $$('.g-divider', gallery);
   const chips = $$('.chip');
 
   const layout = () => {
     const cols = getComputedStyle(gallery).gridTemplateColumns.split(' ').length;
     let i = 0;
-    tiles.forEach(t => {
-      if (t.classList.contains('hide')) return;
-      t.classList.toggle('offset', cols > 2 && i % cols % 2 === 1);
+    [...gallery.children].forEach(el => {
+      if (el.classList.contains('hide')) return;
+      if (el.classList.contains('g-divider')) { i = 0; return; }
+      el.classList.toggle('offset', cols > 2 && i % cols % 2 === 1);
       i++;
     });
   };
@@ -45,6 +47,7 @@
     tiles.forEach(t => t.classList.add('fading'));
     setTimeout(() => {
       tiles.forEach(t => t.classList.toggle('hide', f !== 'all' && t.dataset.cat !== f));
+      dividers.forEach(d => d.classList.toggle('hide', f !== 'all'));
       layout();
       requestAnimationFrame(() => tiles.forEach(t => t.classList.remove('fading')));
     }, 280);
