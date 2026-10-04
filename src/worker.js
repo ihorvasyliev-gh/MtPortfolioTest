@@ -124,33 +124,40 @@ async function handleApi(request, env, url) {
     const key = url.searchParams.get('key') || '';
     if (!R2_KEY_RE.test(key)) return json({ error: 'bad key' }, 400);
     await env.BUCKET.delete(key);
+    await caches.default.delete(new Request(`${url.origin}/img/${key}`)); // this location only; others expire within 24h
     return json({ ok: true });
   }
 
   return json({ error: 'not found' }, 404);
 }
 
+const IMMUTABLE = 'public, max-age=31536000, immutable';
+
 async function serveImage(request, env, url) {
   const key = decodeURIComponent(url.pathname.slice('/img/'.length));
   if (!R2_KEY_RE.test(key)) return new Response('Not found', { status: 404 });
 
+  // Browsers keep photos "forever" (keys are never reused). The edge copy lives one day only,
+  // so a deleted photo disappears from every Cloudflare location within 24h.
   const cache = caches.default;
   const cacheKey = new Request(url.origin + url.pathname);
   const hit = await cache.match(cacheKey);
-  if (hit) return hit;
+  if (hit) {
+    const headers = new Headers(hit.headers);
+    headers.set('cache-control', IMMUTABLE);
+    return new Response(hit.body, { headers });
+  }
 
   const obj = await env.BUCKET.get(key);
   if (!obj) return new Response('Not found', { status: 404 });
-  const res = new Response(obj.body, {
-    headers: {
-      'content-type': obj.httpMetadata?.contentType || 'image/jpeg',
-      // Keys contain a random id and are never overwritten, so they can be cached forever.
-      'cache-control': 'public, max-age=31536000, immutable',
-      etag: obj.httpEtag,
-    },
-  });
-  if (request.method === 'GET') await cache.put(cacheKey, res.clone());
-  return res;
+  const headers = {
+    'content-type': obj.httpMetadata?.contentType || 'image/jpeg',
+    etag: obj.httpEtag,
+  };
+  if (request.method !== 'GET') return new Response(null, { headers: { ...headers, 'cache-control': IMMUTABLE } });
+  const [forClient, forCache] = obj.body.tee();
+  await cache.put(cacheKey, new Response(forCache, { headers: { ...headers, 'cache-control': 'public, max-age=86400' } }));
+  return new Response(forClient, { headers: { ...headers, 'cache-control': IMMUTABLE } });
 }
 
 async function servePage(request, env, url) {

@@ -21,15 +21,19 @@ wrangler.jsonc     конфигурация Cloudflare
 
 ## Первый запуск (один раз)
 
-Нужен аккаунт Cloudflare (бесплатного плана достаточно) и Node.js 20+.
+Нужен аккаунт Cloudflare (бесплатного плана достаточно), в нём один раз включённый **R2** (Dashboard → R2 Object Storage → Enable; потребуется карта, но 10 ГБ бесплатно) и Node.js 20+.
+
+**API-токен** (Dashboard → My Profile → API Tokens → Create Token → шаблон *Edit Cloudflare Workers*, и добавить право *Account → Workers R2 Storage → Edit*) и **Account ID** (Dashboard → справа на странице Workers & Pages).
 
 ```bash
 npm install
-npx wrangler login
-npx wrangler r2 bucket create mtportfolio-photos   # R2 нужно один раз включить в дашборде Cloudflare (нужна карта, но 10 ГБ бесплатно)
-npm run deploy                                     # выдаст адрес вида https://mtportfolio.<аккаунт>.workers.dev
-npx wrangler secret put ADMIN_PASSWORD             # придумайте длинный пароль для Марии
+export CLOUDFLARE_API_TOKEN=...  CLOUDFLARE_ACCOUNT_ID=...   # либо просто `npx wrangler login`
+npm run setup
 ```
+
+`npm run setup` делает всё сам и его можно запускать повторно: создаёт бакет R2, деплоит сайт, ставит пароль админки (если не задан — генерирует и печатает его) и **переносит старые фото из `public/assets/` в R2** (`scripts/migrate-photos.mjs`; если в R2 уже есть опубликованный контент, он не перезаписывается).
+
+После переноса папку `public/assets/photos` и `public/assets/thumbs` в репозитории можно удалить: сайт берёт фото из R2.
 
 Админка: `https://<адрес сайта>/admin/`.
 

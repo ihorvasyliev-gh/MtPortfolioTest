@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "setup": "bash scripts/setup.sh",
+    "migrate:remote": "node scripts/migrate-photos.mjs --remote"
   },
   "devDependencies": {
     "wrangler": "^4"
