@@ -1,17 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "mtportfolio",
-  "main": "src/worker.js",
+  "name": "mariia-troian",
   "compatibility_date": "2025-09-01",
-  "assets": {
-    "directory": "./public",
-    "binding": "ASSETS",
-    "run_worker_first": ["/", "/index.html", "/api/*", "/img/*"],
-    "html_handling": "auto-trailing-slash"
-  },
+  "pages_build_output_dir": "./dist",
   "r2_buckets": [
     { "binding": "BUCKET", "bucket_name": "mtportfolio-photos" }
   ]
-  // Optional: serve photos straight from an R2 custom domain (faster, no Worker hit per image):
+  // Optional: serve photos straight from an R2 custom domain (faster, no Function hit per image):
   // "vars": { "IMG_BASE": "https://photos.example.com" }
 }
