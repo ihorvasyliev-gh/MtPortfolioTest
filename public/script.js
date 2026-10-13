@@ -255,7 +255,7 @@
   // ---------- lightbox: the photo flies out of its tile ----------
   const lb = $('#lightbox'), lbImg = $('#lbImg'), lbBg = $('.lb-bg', lb);
   const lbIdx = $('#lbIdx'), lbTotal = $('#lbTotal'), lbCap = $('#lbCap');
-  let list = [], cur = 0, rect = null, busy = false, lastFocus = null;
+  let list = [], cur = 0, rect = null, lastFocus = null;
 
   const arOf = tile => { const i = $('img', tile); return i.getAttribute('width') / i.getAttribute('height') || 0.667; };
   const fit = ar => {
@@ -312,8 +312,9 @@
   };
 
   const closeLb = () => {
-    if (!lbOpen || busy) return;
+    if (!lbOpen) return;
     lbOpen = false;
+    slide?.cancel();
     const tile = list[cur];
     const b = tile.getBoundingClientRect();
     const onScreen = b.bottom > 0 && b.top < innerHeight;
@@ -335,30 +336,28 @@
     lastFocus?.focus({ preventScroll: true });
   };
 
-  const go = (dir, fromDx = 0) => {
-    if (busy || list.length < 2) return;
-    busy = true;
-    const next = (cur + dir + list.length) % list.length;
-    const tile = list[next];
+  // Never blocks: the counter moves at once and a newer click cancels the previous slide-in,
+  // so several fast clicks flip several photos.
+  let navId = 0, slide = null;
+  const go = dir => {
+    if (!lbOpen || list.length < 2) return;
+    const id = ++navId;
+    cur = (cur + dir + list.length) % list.length;
+    const tile = list[cur];
     const thumb = $('img', tile);
-    const ready = decoded(thumb.currentSrc || thumb.src);
-    const out = reduce ? null : lbImg.animate(
-      [{ transform: T(rect, fromDx), opacity: 1 }, { transform: T(rect, -dir * 90, 0, 0.96), opacity: 0 }],
-      { duration: 380, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' },
-    );
-    Promise.all([ready, out?.finished]).then(() => {
-      cur = next;
-      lbImg.src = thumb.currentSrc || thumb.src;
+    const src = thumb.currentSrc || thumb.src;
+    updateUI();
+    lift(tile);
+    decoded(src).then(() => {
+      if (id !== navId || !lbOpen) return;
+      slide?.cancel();
+      lbImg.src = src;
       place(fit(arOf(tile)));
-      out?.cancel();
-      updateUI();
-      lift(tile);
       loadFull(tile);
-      const inn = reduce ? null : lbImg.animate(
-        [{ transform: T(rect, dir * 90, 0, 0.96), opacity: 0 }, { transform: T(rect), opacity: 1 }],
-        { duration: 700, easing: OUT_EASE },
+      slide = reduce ? null : lbImg.animate(
+        [{ transform: T(rect, dir * 60, 0, 0.97), opacity: 0 }, { transform: T(rect), opacity: 1 }],
+        { duration: 420, easing: OUT_EASE },
       );
-      (inn ? inn.finished : Promise.resolve()).then(() => { busy = false; });
     });
   };
 
@@ -381,12 +380,13 @@
         else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
       }
     });
-    addEventListener('resize', () => { if (lbOpen && !busy) place(fit(arOf(list[cur]))); });
+    addEventListener('resize', () => { if (lbOpen) place(fit(arOf(list[cur]))); });
 
     // drag / swipe: sideways = next/previous, down = close
     let drag = null;
     lbImg.addEventListener('pointerdown', e => {
-      if (busy || e.button > 0) return;
+      if (e.button > 0) return;
+      slide?.cancel();
       drag = { x: e.clientX, y: e.clientY, dx: 0, dy: 0, axis: null };
       try { lbImg.setPointerCapture(e.pointerId); } catch {}
       lbImg.classList.add('dragging');
@@ -408,7 +408,7 @@
       const { dx, dy, axis } = drag;
       drag = null;
       lbImg.classList.remove('dragging');
-      if (axis === 'x' && Math.abs(dx) > 70) return go(dx < 0 ? 1 : -1, dx);
+      if (axis === 'x' && Math.abs(dx) > 70) return go(dx < 0 ? 1 : -1);
       if (axis === 'y' && dy > 110) return closeLb();
       if (axis) {
         lbBg.style.opacity = '';
