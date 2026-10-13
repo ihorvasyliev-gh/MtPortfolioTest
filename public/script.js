@@ -421,42 +421,8 @@
     lbImg.addEventListener('pointercancel', endDrag);
   }
 
-  // ---------- custom cursor, magnetic buttons, hover light (mouse only) ----------
+  // ---------- magnetic buttons, hover light (mouse only) ----------
   if (fine && !reduce) {
-    const cursor = d.createElement('div');
-    cursor.className = 'cursor is-hidden';
-    cursor.setAttribute('aria-hidden', 'true');
-    cursor.innerHTML = '<span class="cursor-ring"><span class="cursor-label">View</span></span><span class="cursor-dot"></span>';
-    d.body.append(cursor);
-    root.classList.add('has-cursor');
-    const dot = $('.cursor-dot', cursor), ring = $('.cursor-ring', cursor), label = $('.cursor-label', cursor);
-    let mx = -100, my = -100, rx = -100, ry = -100, loop = false;
-    const follow = () => {
-      rx += (mx - rx) * 0.2;
-      ry += (my - ry) * 0.2;
-      ring.style.transform = `translate(${rx}px,${ry}px)`;
-      loop = Math.abs(mx - rx) + Math.abs(my - ry) > 0.2;
-      if (loop) raf(follow);
-    };
-    addEventListener('pointermove', e => {
-      if (e.pointerType !== 'mouse') return;
-      mx = e.clientX; my = e.clientY;
-      dot.style.transform = `translate(${mx}px,${my}px)`;
-      cursor.classList.remove('is-hidden');
-      if (!loop) { loop = true; raf(follow); }
-    }, { passive: true });
-    d.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
-    addEventListener('blur', () => cursor.classList.add('is-hidden'));
-    addEventListener('pointerdown', () => cursor.classList.add('is-down'));
-    addEventListener('pointerup', () => cursor.classList.remove('is-down'));
-    d.addEventListener('pointerover', e => {
-      const t = e.target;
-      const view = t.closest?.('.tile, .lb-img');
-      cursor.classList.toggle('is-view', !!view);
-      if (view) label.textContent = view.classList.contains('lb-img') ? 'Drag' : 'View';
-      cursor.classList.toggle('is-link', !view && !!t.closest?.('a, button, .work-list li'));
-    });
-
     $$('[data-magnetic]').forEach(el => {
       const k = el.classList.contains('logo') ? 0.35 : 0.22;
       el.addEventListener('pointermove', e => {

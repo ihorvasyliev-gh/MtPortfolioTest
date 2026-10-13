@@ -334,20 +334,6 @@ dd{text-align:right}
 .lb-next{right:var(--gutter);transform:translateX(12px)}
 .lightbox.open .lb-nav{transform:none;transition-delay:.3s}
 
-/* ---------- CUSTOM CURSOR (fine pointers only, created by script.js) ---------- */
-.cursor{position:fixed;left:0;top:0;z-index:300;pointer-events:none;transition:opacity .4s}
-.cursor.is-hidden{opacity:0}
-.cursor-dot,.cursor-ring{position:absolute;left:0;top:0;border-radius:50%}
-.cursor-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--accent);transition:opacity .3s}
-.cursor-ring{width:40px;height:40px;margin:-20px 0 0 -20px;border:1px solid rgba(241,236,228,.4);display:grid;place-items:center;transition:width .6s var(--out),height .6s var(--out),margin .6s var(--out),background .5s,border-color .5s,scale .3s var(--out)}
-.cursor-label{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:#0a0a0b;font-weight:500;opacity:0;transform:scale(.6);transition:opacity .3s,transform .5s var(--out)}
-.cursor.is-link .cursor-ring{width:64px;height:64px;margin:-32px 0 0 -32px;border-color:var(--accent);background:rgba(201,169,122,.08)}
-.cursor.is-view .cursor-ring{width:92px;height:92px;margin:-46px 0 0 -46px;border-color:var(--accent);background:var(--accent)}
-.cursor.is-view .cursor-label{opacity:1;transform:none}
-.cursor.is-view .cursor-dot,.cursor.is-link .cursor-dot{opacity:0}
-.cursor.is-down .cursor-ring{scale:.85}
-.has-cursor,.has-cursor *{cursor:none!important}
-
 /* ---------- 404 ---------- */
 .nf{min-height:100svh;display:grid;place-items:center;padding:var(--pad);text-align:center}
 .nf-main{display:flex;flex-direction:column;align-items:center;gap:22px}
