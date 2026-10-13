@@ -14,6 +14,29 @@
   let lbOpen = false;
   if (reduce) root.classList.add('no-anim');
 
+  // ---------- visit stats (cookieless, see src/stats.js); skipped for Do Not Track / GPC ----------
+  const optOut = navigator.globalPrivacyControl || navigator.doNotTrack === '1';
+  const track = (t, item) => {
+    if (optOut || !navigator.sendBeacon) return;
+    const body = { t, item };
+    if (t === 'view') Object.assign(body, { ref: d.referrer, utm: new URLSearchParams(location.search).get('utm_source') });
+    try { navigator.sendBeacon('/api/t', JSON.stringify(body)); } catch {}
+  };
+  track('view');
+  d.addEventListener('click', e => {
+    const a = e.target.closest?.('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    const kind = href.startsWith('mailto:') ? 'email' : href.startsWith('tel:') ? 'phone' : /instagram\.com/.test(href) ? 'instagram' : '';
+    if (kind) track('contact', kind);
+  });
+  // A photo counts as viewed once it has stayed open in the lightbox for a moment.
+  let seenTimer = 0;
+  const seen = tile => {
+    clearTimeout(seenTimer);
+    if (tile) seenTimer = setTimeout(() => track('photo', tile.dataset.id), 800);
+  };
+
   // ---------- smooth scroll ----------
   const lenis = !reduce && window.Lenis ? new window.Lenis({ autoRaf: true, anchors: true, lerp: 0.09 }) : null;
   const lock = on => {
@@ -308,6 +331,7 @@
     if (!reduce) lbImg.animate([{ transform: fromTile(tile, rect) }, { transform: T(rect) }], { duration: 950, easing: IO_EASE });
     raf(() => lb.classList.add('open'));
     loadFull(tile);
+    seen(tile);
     lb.focus({ preventScroll: true });
   };
 
@@ -315,6 +339,7 @@
     if (!lbOpen) return;
     lbOpen = false;
     slide?.cancel();
+    seen(null);
     const tile = list[cur];
     const b = tile.getBoundingClientRect();
     const onScreen = b.bottom > 0 && b.top < innerHeight;
@@ -348,6 +373,7 @@
     const src = thumb.currentSrc || thumb.src;
     updateUI();
     lift(tile);
+    seen(tile);
     decoded(src).then(() => {
       if (id !== navId || !lbOpen) return;
       slide?.cancel();
@@ -484,6 +510,7 @@
         const small = $('small', btn);
         btn.setAttribute('aria-busy', 'true');
         small.textContent = '…';
+        track('compcard');
         try {
           const data = JSON.parse(ccData.textContent);
           const { buildCompCard, saveBlob } = await import('/compcard.js');

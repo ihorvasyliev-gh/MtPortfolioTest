@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#0a0a0b">
-<title>Админка · Mariia Troian</title>
+<title>Admin · Mariia Troian</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/fonts/jost-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/admin/admin.css">
 </head>
 <body>
@@ -22,35 +22,36 @@
   </div>
   <form class="login-card" id="loginForm">
     <p class="kicker">Mariia Troian</p>
-    <h1>Вход в <em>админку</em></h1>
+    <h1>Sign in to <em>admin</em></h1>
     <label class="field">
-      <span>Пароль</span>
+      <span>Password</span>
       <input type="password" id="password" autocomplete="current-password" required autofocus>
     </label>
     <p class="error" id="loginError" role="alert" hidden></p>
-    <button class="btn primary" type="submit">Войти</button>
-    <a class="login-back" href="/">← Вернуться на сайт</a>
+    <button class="btn primary" type="submit">Sign in</button>
+    <a class="login-back" href="/">← Back to the site</a>
   </form>
 </main>
 
 <!-- APP -->
 <div class="app" id="app" hidden>
   <header class="top">
-    <a class="top-logo" href="/" target="_blank" rel="noopener" aria-label="Открыть сайт">M<span>.</span>T</a>
+    <a class="top-logo" href="/" target="_blank" rel="noopener" aria-label="Open the site">M<span>.</span>T</a>
     <div class="top-title">
-      <strong>Админка</strong>
+      <strong>Admin</strong>
       <span class="status" id="status"></span>
     </div>
-    <a class="btn ghost small" href="/" target="_blank" rel="noopener">Открыть сайт ↗</a>
-    <button class="btn primary small" id="publish" disabled>Опубликовать</button>
+    <a class="btn ghost small" href="/" target="_blank" rel="noopener">Open site ↗</a>
+    <button class="btn primary small" id="publish" disabled>Publish</button>
   </header>
 
-  <nav class="tabs" id="tabs" role="tablist" aria-label="Разделы">
-    <button role="tab" data-tab="photos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg><span>Фото</span></button>
-    <button role="tab" data-tab="profile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Профиль</span></button>
-    <button role="tab" data-tab="services"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg><span>Услуги</span></button>
-    <button role="tab" data-tab="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span>Параметры</span></button>
-    <button role="tab" data-tab="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 7l9 6 9-6"/></svg><span>Контакты</span></button>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" data-tab="photos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg><span>Photos</span></button>
+    <button role="tab" data-tab="profile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Profile</span></button>
+    <button role="tab" data-tab="services"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg><span>Services</span></button>
+    <button role="tab" data-tab="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span>Measurements</span></button>
+    <button role="tab" data-tab="visits"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Visits</span></button>
+    <button role="tab" data-tab="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 7l9 6 9-6"/></svg><span>Contact</span></button>
   </nav>
 
   <main class="content" id="content"></main>

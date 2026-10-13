@@ -11,6 +11,10 @@
   },
   "r2_buckets": [
     { "binding": "BUCKET", "bucket_name": "mtportfolio-photos" }
+  ],
+  // Visit stats for the admin "Визиты" tab (table is created on first use).
+  "d1_databases": [
+    { "binding": "DB", "database_name": "mtportfolio-stats", "database_id": "ebee6713-8436-43bb-9f49-dc5cb94018f8" }
   ]
   // Optional: serve photos straight from an R2 custom domain (faster, no Worker hit per image):
   // "vars": { "IMG_BASE": "https://photos.example.com" }

@@ -1,5 +1,6 @@
 import { defaults, sanitize, R2_KEY_RE } from './content.js';
 import { renderPage, renderNotFound, renderSitemap } from './render.js';
+import { eventFrom, record, summary } from './stats.js';
 
 const CONTENT_KEY = 'content.json';
 const COOKIE = 'mt_session';
@@ -61,9 +62,22 @@ async function loadContent(env) {
 
 // ---------- routes ----------
 
-async function handleApi(request, env, url) {
+async function handleApi(request, env, url, ctx) {
   const { pathname } = url;
   const method = request.method;
+
+  // Visit beacon from script.js (navigator.sendBeacon can't set headers, so it skips the admin CSRF check).
+  if (pathname === '/api/t' && method === 'POST') {
+    const origin = request.headers.get('origin');
+    if (!env.DB || (origin && origin !== url.origin)) return new Response(null, { status: 204 });
+    const text = await request.text();
+    if (text.length > 600 || (await isAuthed(request, env))) return new Response(null, { status: 204 });
+    let body = null;
+    try { body = JSON.parse(text); } catch {}
+    const ev = await eventFrom(body, request, env);
+    if (ev) ctx.waitUntil(record(env, ev).catch(err => console.error('stats', err)));
+    return new Response(null, { status: 204 });
+  }
 
   // CSRF: browsers always send Origin on cross-site writes; reject if it isn't us.
   if (method !== 'GET' && method !== 'HEAD') {
@@ -102,6 +116,11 @@ async function handleApi(request, env, url) {
     next.rev = current.rev + 1;
     await env.BUCKET.put(CONTENT_KEY, JSON.stringify(next), { httpMetadata: { contentType: 'application/json' } });
     return json(next);
+  }
+
+  if (pathname === '/api/admin/stats' && method === 'GET') {
+    if (!env.DB) return json({ enabled: false });
+    return json(await summary(env, url.searchParams.get('days')));
   }
 
   if (pathname === '/api/admin/upload' && method === 'POST') {
@@ -186,10 +205,10 @@ async function notFound(request, env, url) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
-      if (url.pathname.startsWith('/api/')) return await handleApi(request, env, url);
+      if (url.pathname.startsWith('/api/')) return await handleApi(request, env, url, ctx);
       if (url.pathname.startsWith('/img/')) return await serveImage(request, env, url);
       if (url.pathname === '/' || url.pathname === '/index.html') return await servePage(request, env, url);
       if (url.pathname === '/robots.txt')

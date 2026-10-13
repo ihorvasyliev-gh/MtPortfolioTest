@@ -100,7 +100,7 @@ export function renderPage(c, { origin = '', imgBase = '' } = {}) {
       const label = catLabel[p.cat] || '';
       return (
         divider +
-        `<button class="tile" data-cat="${esc(p.cat)}" data-label="${esc(label)}" data-full="${esc(src(p.full))}" data-alt="${esc(p.alt)}" style="--ar:${p.w}/${p.h}" aria-label="Open photo: ${esc(p.alt)}">` +
+        `<button class="tile" data-id="${esc(p.id)}" data-cat="${esc(p.cat)}" data-label="${esc(label)}" data-full="${esc(src(p.full))}" data-alt="${esc(p.alt)}" style="--ar:${p.w}/${p.h}" aria-label="Open photo: ${esc(p.alt)}">` +
         `<span class="tile-in"><img src="${esc(src(p.thumb))}" width="${p.w}" height="${p.h}" alt="${esc(p.alt)}" loading="lazy" decoding="async"></span>` +
         `<span class="tile-cap" aria-hidden="true"><span>${esc(label)}</span><span>${pad(i)}</span></span></button>`
       );
