@@ -339,10 +339,14 @@
   const loadStats = async () => {
     if (statsLoading) return;
     statsLoading = true; statsErr = '';
-    try { stats = await api('/api/admin/stats?days=' + statsDays); } catch (e) { statsErr = e.message; }
+    try { stats = await api('/api/admin/stats?days=' + statsDays); stats.at = new Date(); } catch (e) { statsErr = e.message; }
     statsLoading = false;
     if (tab === 'visits') render();
   };
+  // Live while the Visits tab is on screen: every 30 s and whenever the window comes back into view.
+  const refreshStats = () => { if (tab === 'visits' && !document.hidden && !$('#dialog').open) loadStats(); };
+  setInterval(refreshStats, 30000);
+  document.addEventListener('visibilitychange', refreshStats);
   const num = n => Number(n || 0).toLocaleString('en-IE');
   const regionName = (() => { try { const d = new Intl.DisplayNames(['en'], { type: 'region' }); return c => { try { return d.of(c); } catch { return c; } }; } catch { return c => c; } })();
   const flag = c => (/^[A-Z]{2}$/.test(c || '') ? String.fromCodePoint(...[...c].map(x => 0x1f1a5 + x.charCodeAt(0))) : '');
@@ -590,7 +594,8 @@
         h('div', { class: 'periods', role: 'group', 'aria-label': 'Period' },
           [[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, 'Year']].map(([d, l]) =>
             h('button', { class: 'chip', 'aria-pressed': String(d === statsDays), onclick: () => { statsDays = d; render(); } }, l)),
-          h('button', { class: 'chip', title: 'Refresh', onclick: () => { stats = null; render(); } }, '↻')),
+          h('button', { class: 'chip', title: 'Refresh', onclick: loadStats }, '↻'),
+          stats?.at && h('span', { class: 'updated' }, 'Updated ' + stats.at.toLocaleTimeString('en-IE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))),
         visitsBody(),
       ];
     },
@@ -659,7 +664,7 @@
   // ---------- boot ----------
   $('#tabs').addEventListener('click', e => {
     const b = e.target.closest('button[data-tab]');
-    if (b) { tab = b.dataset.tab; render(true); scrollTo(0, 0); }
+    if (b) { tab = b.dataset.tab; if (tab === 'visits' && stats) loadStats(); render(true); scrollTo(0, 0); }
   });
   $('#publish').addEventListener('click', publish);
 

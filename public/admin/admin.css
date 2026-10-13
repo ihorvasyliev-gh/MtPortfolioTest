@@ -242,6 +242,7 @@ dialog::backdrop{background:rgba(5,5,6,.72);backdrop-filter:blur(6px);-webkit-ba
 .periods{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .chip{min-height:40px;padding:0 16px;border:1px solid var(--line-2);border-radius:999px;font-size:.78rem;letter-spacing:.06em;color:var(--ink-2);transition:border-color .3s,color .3s,background .3s}
 .chip:hover{border-color:var(--accent);color:var(--ink)}
+.updated{align-self:center;font-size:.78rem;color:var(--muted)}
 .chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#0a0a0b}
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
 .kpi{display:flex;flex-direction:column;gap:2px;padding:16px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);min-width:0}
