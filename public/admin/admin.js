@@ -62,7 +62,15 @@
   const touch = () => setDirty(true);
   addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 
+  const unboot = () => {
+    const b = $('#boot');
+    if (!b) return;
+    b.classList.add('gone');
+    setTimeout(() => b.remove(), 600);
+  };
+
   const showLogin = () => {
+    unboot();
     $('#app').hidden = true;
     $('#login').hidden = false;
     $('#password').focus();
@@ -177,7 +185,7 @@
 
   // ---------- dialogs ----------
   const dlg = $('#dialog');
-  const openDialog = node => { dlg.replaceChildren(node); if (!dlg.open) dlg.showModal(); };
+  const openDialog = (node, wide = false) => { dlg.classList.toggle('wide', wide); dlg.replaceChildren(node); if (!dlg.open) dlg.showModal(); };
   const closeDialog = () => dlg.open && dlg.close();
   dlg.addEventListener('click', e => { if (e.target === dlg) closeDialog(); });
 
@@ -212,6 +220,7 @@
     if (usedAsSpecial(p)) return toast('Это фото используется как главное или в «Обо мне». Сначала замените его.', true);
     if (!confirm('Удалить это фото? После публикации оно пропадёт с сайта.')) return;
     content.photos.splice(content.photos.indexOf(p), 1);
+    if (content.compcard) content.compcard.photos = content.compcard.photos.map(id => (id === p.id ? '' : id));
     if (isR2(p.full)) toDelete.add(p.full);
     if (isR2(p.thumb)) toDelete.add(p.thumb);
     touch(); closeDialog(); render();
@@ -235,11 +244,102 @@
         h('strong', {}, label),
         h('button', { class: 'btn small', onclick: () => pickPhoto(label, p => { target.image = { full: p.full, alt: p.alt }; }, target.image.full) }, 'Выбрать другое фото')));
 
+  // ---------- comp card ----------
+  // Same rule as the server: an empty slot is filled with the hero photo, then visible photos in order.
+  function ccSlots() {
+    const byId = new Map(content.photos.map(p => [p.id, p]));
+    const wanted = content.compcard?.photos || [];
+    const slots = [0, 1, 2, 3, 4].map(k => (byId.has(wanted[k]) ? wanted[k] : ''));
+    const pool = [content.photos.find(p => p.full === content.hero.image.full && !p.hidden), ...content.photos.filter(p => !p.hidden)]
+      .filter(Boolean)
+      .map(p => p.id);
+    const taken = new Set(slots.filter(Boolean));
+    return slots
+      .map(id => {
+        if (id) return { id, auto: false };
+        const next = pool.find(x => !taken.has(x));
+        if (next) taken.add(next);
+        return { id: next || '', auto: true };
+      })
+      .filter(x => x.id);
+  }
+
+  function setCcSlot(k, id) {
+    const ids = [0, 1, 2, 3, 4].map(i => content.compcard?.photos?.[i] || '');
+    const was = ids.indexOf(id);
+    if (was >= 0) ids[was] = ids[k];
+    ids[k] = id;
+    content.compcard = { photos: ids };
+  }
+
+  const ccData = () => {
+    const s = content.site;
+    const byId = new Map(content.photos.map(p => [p.id, p]));
+    return {
+      name: s.name, role: s.role, location: s.location, email: s.email, instagram: s.instagram,
+      url: location.origin, stats: content.stats, traits: content.traits,
+      photos: ccSlots().map(x => byId.get(x.id)).map(p => ({ src: imgUrl(p.full), w: p.w, h: p.h })),
+    };
+  };
+
+  async function ccDownload() {
+    try {
+      const { buildCompCard, saveBlob } = await import('/compcard.js');
+      saveBlob(await buildCompCard(ccData()), `${content.site.name.replace(/[^\w]+/g, '-')}-comp-card.pdf`);
+    } catch (e) {
+      toast('Не удалось собрать PDF: ' + e.message, true);
+    }
+  }
+
+  async function ccPreview() {
+    openDialog(h('div', { class: 'dlg' }, h('h3', {}, 'Comp card'), h('div', { class: 'spinner' }), h('p', { class: 'lead' }, 'Собираю страницы…')), true);
+    try {
+      const { renderPages } = await import('/compcard.js');
+      const pages = await renderPages(ccData());
+      pages.forEach(p => (p.canvas.className = 'cc-page'));
+      openDialog(h('div', { class: 'dlg' },
+        h('h3', {}, 'Comp card — предпросмотр'),
+        h('div', { class: 'cc-preview' }, pages.map(p => p.canvas)),
+        dirty && h('p', { class: 'lead' }, 'Здесь видны неопубликованные изменения. На сайте comp card обновится после «Опубликовать».'),
+        h('div', { class: 'dlg-actions' },
+          h('button', { class: 'btn', onclick: closeDialog }, 'Закрыть'),
+          h('button', { class: 'btn primary grow', onclick: ccDownload }, 'Скачать PDF'))), true);
+    } catch (e) {
+      closeDialog();
+      toast('Не удалось собрать comp card: ' + e.message, true);
+    }
+  }
+
+  function compCardCard() {
+    const byId = new Map(content.photos.map(p => [p.id, p]));
+    const slots = ccSlots();
+    return h('div', { class: 'card' },
+      h('h3', {}, 'Comp card (PDF)'),
+      h('p', { class: 'lead' }, 'Визитка для агентств и кастингов: обложка + 4 фото на обороте, параметры отсюда и контакты. Посетители скачивают её кнопкой «Download comp card» на сайте. Нажмите на фото, чтобы заменить.'),
+      slots.length
+        ? h('div', { class: 'cc-slots' }, [0, 1, 2, 3, 4].map(k => {
+            const x = slots[k];
+            const p = x && byId.get(x.id);
+            return h('button', {
+              class: 'cc-slot' + (k === 0 ? ' cover' : ''),
+              title: 'Выбрать другое фото',
+              onclick: () => pickPhoto(k ? `Фото ${k} на обороте` : 'Обложка comp card', ph => setCcSlot(k, ph.id), p?.full),
+            },
+            p && h('img', { src: imgUrl(p.thumb), alt: '' }),
+            h('span', {}, k ? `Оборот · ${k}` : 'Обложка', x?.auto && h('i', {}, 'авто')));
+          }))
+        : h('p', { class: 'lead' }, 'Сначала загрузите фото во вкладке «Фото».'),
+      slots.length > 0 && h('div', { class: 'dlg-actions' },
+        h('button', { class: 'btn', onclick: ccPreview }, 'Посмотреть'),
+        h('button', { class: 'btn', onclick: ccDownload }, 'Скачать PDF')));
+  }
+
   // ---------- tabs ----------
   const tabs = {
     photos() {
       const c = content;
       let dragIdx = null;
+      const inCompCard = new Set(ccSlots().map(x => x.id));
       const grid = h('div', { class: 'grid' }, c.photos.map((p, i) => {
         const cat = c.categories.find(x => x.id === p.cat);
         const card = h('div', { class: `ph${p.hidden ? ' ph-hidden' : ''}${fresh.has(p.id) ? ' fresh' : ''}`, draggable: 'true' },
@@ -247,7 +347,9 @@
             h('img', { src: imgUrl(p.thumb), alt: p.alt, loading: 'lazy' }),
             h('span', { class: 'ph-tags' },
               cat ? h('span', { class: 'tag' }, cat.label) : h('span', { class: 'tag warn' }, 'без категории'),
-              p.hidden && h('span', { class: 'tag' }, 'скрыто'))),
+              p.hidden && h('span', { class: 'tag' }, 'скрыто'),
+              p.full === c.hero.image.full && h('span', { class: 'tag gold' }, 'главное'),
+              inCompCard.has(p.id) && h('span', { class: 'tag' }, 'comp card'))),
           h('div', { class: 'ph-bar' },
             h('button', { title: 'Раньше', disabled: i === 0, onclick: () => move(c.photos, i, -1) }, '←'),
             h('button', { title: 'Изменить', onclick: () => editPhoto(p) }, '✎'),
@@ -342,13 +444,14 @@
     stats() {
       return [
         h('h2', {}, 'Параметры'),
-        h('p', { class: 'lead' }, 'Раздел «Measurements» — comp card.'),
+        h('p', { class: 'lead' }, 'Раздел «Measurements» на сайте и данные для comp card.'),
         h('div', { class: 'card' },
           h('h3', {}, 'Крупные показатели'),
           repeater(content.stats, [{ key: 'value', label: 'Значение', placeholder: '168', max: 40 }, { key: 'unit', label: 'Единица (необязательно)', placeholder: 'cm', max: 10 }, { key: 'label', label: 'Подпись', placeholder: 'Height', max: 60 }], () => ({ value: '', unit: '', label: '' }), 'Добавить показатель', 8)),
         h('div', { class: 'card' },
           h('h3', {}, 'Внешность'),
           repeater(content.traits, [{ key: 'label', label: 'Название', placeholder: 'Eyes', max: 60 }, { key: 'value', label: 'Значение', max: 200 }], () => ({ label: '', value: '' }), 'Добавить', 9)),
+        compCardCard(),
       ];
     },
 
@@ -381,9 +484,15 @@
     },
   };
 
-  function render() {
+  function render(enter = false) {
     for (const b of document.querySelectorAll('.tabs button')) b.setAttribute('aria-selected', b.dataset.tab === tab);
-    $('#content').replaceChildren(...tabs[tab]());
+    const el = $('#content');
+    el.replaceChildren(...tabs[tab]());
+    if (enter) {
+      el.classList.remove('enter');
+      void el.offsetWidth;
+      el.classList.add('enter');
+    }
   }
 
   // ---------- publish ----------
@@ -410,7 +519,7 @@
   // ---------- boot ----------
   $('#tabs').addEventListener('click', e => {
     const b = e.target.closest('button[data-tab]');
-    if (b) { tab = b.dataset.tab; render(); scrollTo(0, 0); }
+    if (b) { tab = b.dataset.tab; render(true); scrollTo(0, 0); }
   });
   $('#publish').addEventListener('click', publish);
 
@@ -431,10 +540,11 @@
     try {
       content = await api('/api/admin/content');
     } catch { return showLogin(); }
+    unboot();
     $('#login').hidden = true;
     $('#app').hidden = false;
     setDirty(false);
-    render();
+    render(true);
   }
 
   start();

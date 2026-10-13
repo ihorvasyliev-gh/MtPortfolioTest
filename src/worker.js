@@ -1,5 +1,5 @@
 import { defaults, sanitize, R2_KEY_RE } from './content.js';
-import { renderPage } from './render.js';
+import { renderPage, renderNotFound, renderSitemap } from './render.js';
 
 const CONTENT_KEY = 'content.json';
 const COOKIE = 'mt_session';
@@ -160,13 +160,29 @@ async function serveImage(request, env, url) {
   return new Response(forClient, { headers: { ...headers, 'cache-control': IMMUTABLE } });
 }
 
+const PAGE_HEADERS = {
+  'x-content-type-options': 'nosniff',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+  'x-frame-options': 'SAMEORIGIN',
+  'permissions-policy': 'camera=(), microphone=(), geolocation=()',
+};
+
 async function servePage(request, env, url) {
   const content = await loadContent(env);
   const html = renderPage(content, { origin: url.origin, imgBase: env.IMG_BASE || '' });
   const etag = `"${hex(await crypto.subtle.digest('SHA-1', enc.encode(html))).slice(0, 20)}"`;
-  const headers = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=0, must-revalidate', etag };
+  const headers = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=0, must-revalidate', etag, ...PAGE_HEADERS };
   if (request.headers.get('if-none-match') === etag) return new Response(null, { status: 304, headers });
   return new Response(html, { headers });
+}
+
+const text = (body, type) =>
+  new Response(body, { headers: { 'content-type': type, 'cache-control': 'public, max-age=3600' } });
+
+async function notFound(request, env, url) {
+  if (!(request.headers.get('accept') || '').includes('text/html')) return new Response('Not found', { status: 404 });
+  const html = renderNotFound(await loadContent(env), { origin: url.origin });
+  return new Response(html, { status: 404, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', ...PAGE_HEADERS } });
 }
 
 export default {
@@ -176,10 +192,14 @@ export default {
       if (url.pathname.startsWith('/api/')) return await handleApi(request, env, url);
       if (url.pathname.startsWith('/img/')) return await serveImage(request, env, url);
       if (url.pathname === '/' || url.pathname === '/index.html') return await servePage(request, env, url);
+      if (url.pathname === '/robots.txt')
+        return text(`User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${url.origin}/sitemap.xml\n`, 'text/plain; charset=utf-8');
+      if (url.pathname === '/sitemap.xml') return text(renderSitemap(url.origin), 'application/xml; charset=utf-8');
+      const asset = await env.ASSETS.fetch(request);
+      return asset.status === 404 ? await notFound(request, env, url) : asset;
     } catch (err) {
       console.error(err);
       return json({ error: 'server error' }, 500);
     }
-    return env.ASSETS.fetch(request);
   },
 };

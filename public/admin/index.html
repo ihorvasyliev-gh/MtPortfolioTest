@@ -7,27 +7,36 @@
 <meta name="theme-color" content="#0a0a0b">
 <title>Админка · Mariia Troian</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/jost-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/admin/admin.css">
 </head>
 <body>
 
+<div class="boot" id="boot" aria-hidden="true">M<span>.</span>T</div>
+
 <!-- LOGIN -->
 <main class="login" id="login" hidden>
+  <div class="login-art" aria-hidden="true">
+    <span class="login-mono"><b>M</b><i>.</i><b>T</b></span>
+    <span class="login-caption">Portfolio · Admin</span>
+  </div>
   <form class="login-card" id="loginForm">
-    <div class="login-logo">M<span>.</span>T</div>
-    <h1>Вход в админку</h1>
+    <p class="kicker">Mariia Troian</p>
+    <h1>Вход в <em>админку</em></h1>
     <label class="field">
       <span>Пароль</span>
       <input type="password" id="password" autocomplete="current-password" required autofocus>
     </label>
     <p class="error" id="loginError" role="alert" hidden></p>
     <button class="btn primary" type="submit">Войти</button>
+    <a class="login-back" href="/">← Вернуться на сайт</a>
   </form>
 </main>
 
 <!-- APP -->
 <div class="app" id="app" hidden>
   <header class="top">
+    <a class="top-logo" href="/" target="_blank" rel="noopener" aria-label="Открыть сайт">M<span>.</span>T</a>
     <div class="top-title">
       <strong>Админка</strong>
       <span class="status" id="status"></span>
@@ -37,11 +46,11 @@
   </header>
 
   <nav class="tabs" id="tabs" role="tablist" aria-label="Разделы">
-    <button role="tab" data-tab="photos"><i>▦</i><span>Фото</span></button>
-    <button role="tab" data-tab="profile"><i>☺</i><span>Профиль</span></button>
-    <button role="tab" data-tab="services"><i>☰</i><span>Услуги</span></button>
-    <button role="tab" data-tab="stats"><i>▤</i><span>Параметры</span></button>
-    <button role="tab" data-tab="settings"><i>⚙</i><span>Контакты</span></button>
+    <button role="tab" data-tab="photos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg><span>Фото</span></button>
+    <button role="tab" data-tab="profile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Профиль</span></button>
+    <button role="tab" data-tab="services"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg><span>Услуги</span></button>
+    <button role="tab" data-tab="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span>Параметры</span></button>
+    <button role="tab" data-tab="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 7l9 6 9-6"/></svg><span>Контакты</span></button>
   </nav>
 
   <main class="content" id="content"></main>

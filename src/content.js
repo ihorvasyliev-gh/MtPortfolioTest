@@ -56,6 +56,8 @@ export function sanitize(input, base = DEFAULTS) {
     });
   }
 
+  const hero = { lede: str(i.hero?.lede, 300), image: image(i.hero?.image, base.hero.image) };
+
   return {
     rev: Number.isInteger(i.rev) && i.rev >= 0 ? i.rev : 0,
     site: {
@@ -66,10 +68,7 @@ export function sanitize(input, base = DEFAULTS) {
       instagram: /^[A-Za-z0-9._]{0,30}$/.test(ig) ? ig : '',
       description: str(site.description, 300),
     },
-    hero: {
-      lede: str(i.hero?.lede, 300),
-      image: image(i.hero?.image, base.hero.image),
-    },
+    hero,
     about: {
       heading: str(i.about?.heading, 80),
       paragraphs: arr(i.about?.paragraphs, 6).map(p => str(p, 1200)).filter(Boolean),
@@ -87,7 +86,26 @@ export function sanitize(input, base = DEFAULTS) {
       note: str(i.contact?.note, 300),
     },
     photos,
+    compcard: { photos: compCardSlots(i.compcard?.photos, photos, hero.image.full) },
   };
+}
+
+/**
+ * Comp card = 1 cover photo + 4 on the back. Slots keep their position; an empty or stale slot
+ * is filled automatically (cover: the hero photo, then visible photos in gallery order).
+ */
+function compCardSlots(wanted, photos, heroFull) {
+  const ids = new Set(photos.map(p => p.id));
+  const slots = [];
+  for (let k = 0; k < 5; k++) {
+    const id = Array.isArray(wanted) ? wanted[k] : '';
+    slots.push(ids.has(id) && !slots.includes(id) ? id : '');
+  }
+  const pool = [photos.find(p => p.full === heroFull && !p.hidden), ...photos.filter(p => !p.hidden)]
+    .filter(Boolean)
+    .map(p => p.id);
+  for (let k = 0; k < 5; k++) if (!slots[k]) slots[k] = pool.find(id => !slots.includes(id)) || '';
+  return slots.filter(Boolean);
 }
 
 /** Admin-only upload keys are `photos/<12 hex>-(full|thumb).(webp|jpg)`. */

@@ -349,5 +349,14 @@
       "w": 601,
       "h": 900
     }
-  ]
+  ],
+  "compcard": {
+    "photos": [
+      "editorial-01",
+      "portrait-01",
+      "portrait-05",
+      "portrait-02",
+      "portrait-06"
+    ]
+  }
 }
